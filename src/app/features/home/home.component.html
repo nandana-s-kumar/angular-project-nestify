@@ -1,0 +1,59 @@
+<main class="home-page">
+
+  <!-- HERO / BANNER -->
+  <section class="hero">
+    <div class="hero-left">
+      <h1>Welcome to <span>NESTIFY</span></h1>
+      <p>Stylish home essentials — curated for comfort and style. Discover new arrivals and exclusive deals.</p>
+      <div class="hero-ctas">
+        <a routerLink="/product-page" class="btn primary">All Products</a>
+        <a class="btn btn-outline" (click)="scrollToFooter($event)">Learn More</a>
+      </div>
+    </div>
+   
+  <div class="hero-right">
+    <a routerLink="/product-page">
+      <img src="assets/Furniture_Web_Banner___Premium_Furniture-removebg-preview.png" 
+           alt="Hero image" 
+           style="cursor: pointer;"/>
+    </a>
+  </div>
+</section>
+
+
+  <!-- CATEGORIES -->
+  <section class="categories">
+    <h2>Shop by Category</h2>
+    <div class="cats-grid" >
+      <ng-container *ngFor="let c of categories">
+      <div class="cat-card" (click)="goToshop(c.name)" >
+        <img [src]="c.img" [alt]="c.name" />
+        <div class="cat-name">{{ c.name }}</div>
+      </div>
+      </ng-container>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="featured">
+    <h2>Featured Products</h2>
+    <div class="products-grid">
+      <div class="product-card" *ngFor="let p of featured">
+        <a [routerLink]="['/product', p.id]">
+          <div class="prod-media">
+            <img [src]="p.image" [alt]="p.title" />
+          </div>
+          <div class="prod-body">
+            <h4 class="prod-title">{{ p.title }}</h4>
+            <div class="prod-meta">
+              <span class="price">₹ {{ p.price }}</span>
+              <span class="rating">⭐ {{ p.rating || '-' }}</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+

@@ -1,0 +1,69 @@
+<main class="products-container">
+  <h2 class="title">All Products</h2>
+
+  <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin-bottom:16px;">
+    <input
+      type="text"
+      placeholder="Search products..."
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchChange()"
+      style="padding:10px 12px; border-radius:8px; border:1px solid #ddd; min-width:220px;"
+    />
+
+    <select [(ngModel)]="sortBy" (change)="onSortChange()" style="padding:10px 12px; border-radius:8px; border:1px solid #ddd;">
+      <option value="name">Name (A - Z)</option>
+      <option value="priceAsc">Price (Low - High)</option>
+      <option value="priceDesc">Price (High - Low)</option>
+      <option value="rating">Rating (High - Low)</option>
+      <option value="stock">Stock (High - Low)</option>
+    </select>
+  </div>
+
+   <div class="category-list" role="tablist" aria-label="Product categories">
+    <button
+      *ngFor="let cat of categories"
+      [class.active]="selectedCategory === cat"
+      (click)="onCategorySelect(cat)"
+      type="button"
+    >
+      {{ cat }}
+    </button>
+  </div> 
+
+  <ng-template #emptyState>
+    <p style="text-align:center; margin-top:30px; color:#666;">No products found.</p>
+  </ng-template>
+
+  <div class="products-grid" *ngIf="getDisplayedProducts().length; else emptyState">
+    <a
+      *ngFor="let product of getDisplayedProducts()"
+      class="product-card"
+      [routerLink]="['/product', product.id]"
+      [queryParams]="{ category: product.category, name: product.name }"
+      style="text-decoration:none; color:inherit; cursor:pointer;"
+    >
+      <img [src]="getPrimaryImage(product)" [alt]="product.name" class="product-image" />
+      <div class="product-info">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+        <div style="margin-top:8px; display:flex; gap:8px; align-items:center; justify-content:space-between;">
+          <span style="font-weight:700;">₹{{ product.price ?? '-' }}</span>
+          <small>⭐ {{ product.rating ?? '-' }}</small>
+          <small *ngIf="product.stock !== undefined">{{ product.stock }} in stock</small>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div style="display:flex; justify-content:center; gap:12px; align-items:center; margin-top:22px;">
+    <button (click)="prevPage()" [disabled]="page === 1" style="padding:8px 14px; border-radius:6px; border:1px solid #ddd;">
+      Prev
+    </button>
+
+    <div>Page {{ page }} / {{ totalPages }}</div>
+
+    <button (click)="nextPage()" [disabled]="page === totalPages" style="padding:8px 14px; border-radius:6px; border:1px solid #ddd;">
+      Next
+    </button>
+  </div>
+</main>

@@ -1,0 +1,71 @@
+<div class="login-root">
+  <div class="login-card" role="main" aria-labelledby="loginTitle">
+    <h1 id="loginTitle" class="brand">NESTIFY</h1>
+    <p class="lead">Welcome back — sign in to continue</p>
+
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate class="login-form">
+      <!-- EMAIL -->
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          email
+          [(ngModel)]="email"
+          #emailCtrl="ngModel"
+          [class.input-invalid]="emailCtrl.invalid && (emailCtrl.touched || emailCtrl.dirty)"
+          aria-describedby="emailHelp"
+          placeholder="Enter Your Email"
+        />
+        <small id="emailHelp" class="err" *ngIf="emailCtrl.invalid && (emailCtrl.touched || emailCtrl.dirty)">
+          <span *ngIf="emailCtrl.errors?.['required']">Email is required.</span>
+          <span *ngIf="emailCtrl.errors?.['email']">Please enter a valid email.</span>
+        </small>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          minlength="6"
+          [(ngModel)]="password"
+          #pwCtrl="ngModel"
+          [class.input-invalid]="pwCtrl.invalid && (pwCtrl.touched || pwCtrl.dirty)"
+          placeholder="Enter your Password"
+        />
+        <small class="err" *ngIf="pwCtrl.invalid && (pwCtrl.touched || pwCtrl.dirty)">
+          <span *ngIf="pwCtrl.errors?.['required']">Password is required.</span>
+          <span *ngIf="pwCtrl.errors?.['minlength']">Password must be at least 6 characters.</span>
+        </small>
+      </div>
+
+      <!-- SUBMIT -->
+      <button
+        type="submit"
+        class="btn"
+        [disabled]="f.invalid || loading"
+        [attr.aria-disabled]="(f.invalid || loading) ? 'true' : 'false'">
+        <span *ngIf="!loading"> Login</span>
+        <span *ngIf="loading">Logging in…</span>
+      </button>
+    </form>
+
+    <!-- small links -->
+    <div class="links">
+      <a routerLink="/forgot-password" class="link">Forgot Password?</a>
+      <span class="dot">•</span>
+      <a routerLink="/signup" class="link">Create Account</a>
+    </div>
+
+    <!-- messages -->
+    <div class="message success" *ngIf="success">{{ success }}</div>
+    <div class="message error" *ngIf="error">{{ error }}</div>
+
+  </div>
+</div>

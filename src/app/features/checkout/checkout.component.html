@@ -1,0 +1,100 @@
+<div class="checkout container">
+  <h2>Checkout</h2>
+
+  <div class="grid">
+    <!-- Left: Shipping & Payment -->
+    <div class="left-panel">
+      <section class="card">
+        <h3>Shipping Address</h3>
+        <form [formGroup]="shippingForm" (ngSubmit)="placeOrder()" novalidate>
+          <div class="row">
+            <label>Full name</label>
+            <input formControlName="fullName" />
+            <small class="error" *ngIf="shippingForm.get('fullName')?.touched && shippingForm.get('fullName')?.invalid">Enter your name</small>
+          </div>
+
+          <div class="row">
+            <label>Phone</label>
+            <input formControlName="phone" />
+            <small class="error" *ngIf="shippingForm.get('phone')?.touched && shippingForm.get('phone')?.invalid">Enter valid phone</small>
+          </div>
+
+          <div class="row">
+            <label>Address Line 1</label>
+            <input formControlName="addressLine1" />
+          </div>
+
+          <div class="row">
+            <label>Address Line 2</label>
+            <input formControlName="addressLine2" />
+          </div>
+
+          <div class="row-inline">
+            <div>
+              <label>City</label>
+              <input formControlName="city" />
+            </div>
+            <div>
+              <label>State</label>
+              <input formControlName="state" />
+            </div>
+          </div>
+
+          <div class="row-inline">
+            <div>
+              <label>Postal Code</label>
+              <input formControlName="postalCode" />
+            </div>
+            <div>
+              <label>Country</label>
+              <input formControlName="country" />
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <section class="card mt">
+        <h3>Payment Method</h3>
+        <div class="payment-options">
+          <label><input type="radio" name="pay" [checked]="paymentMethod==='COD'" (change)="setPayment('COD')"/> Cash on Delivery</label>
+          <label><input type="radio" name="pay" [checked]="paymentMethod==='CARD'" (change)="setPayment('CARD')"/> Card</label>
+          <label><input type="radio" name="pay" [checked]="paymentMethod==='UPI'" (change)="setPayment('UPI')"/> UPI</label>
+        </div>
+
+        <div class="payment-help" *ngIf="paymentMethod === 'CARD'">
+          <p>Enter card details on the next screen (this demo doesn't collect card details).</p>
+        </div>
+
+        <div class="action-row">
+          <button class="place-btn" [disabled]="placingOrder" (click)="placeOrder()">
+            <span *ngIf="placingOrder">Placing order...</span>
+            <span *ngIf="!placingOrder">Place order</span>
+          </button>
+        </div>
+
+        <div class="error" *ngIf="error">{{ error }}</div>
+      </section>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <aside class="right-panel card">
+      <h3>Order summary</h3>
+
+      <div *ngIf="cartEntries.length === 0">
+        <p>Your cart is empty.</p>
+      </div>
+
+      <div *ngFor="let e of cartEntries" class="summary-item">
+        <div class="name">{{ e.product.name }}</div>
+        <div class="meta">{{ e.quantity }} × ₹{{ (e.product.price ?? 0) | number:'1.2-2' }}</div>
+        <div class="amount">₹{{ ((e.product.price ?? 0) * e.quantity) | number:'1.2-2' }}</div>
+      </div>
+
+      <div class="summary-totals">
+        <div><span>Subtotal</span><span>₹{{ subtotal | number:'1.2-2' }}</span></div>
+        <div><span>Shipping</span><span>₹{{ shippingFee | number:'1.2-2' }}</span></div>
+        <div class="total"><span>Total</span><span>₹{{ total | number:'1.2-2' }}</span></div>
+      </div>
+    </aside>
+  </div>
+</div>

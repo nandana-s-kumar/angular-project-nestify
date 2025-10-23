@@ -1,0 +1,32 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <a class="logo" routerLink="/">
+      <img src="assets\Emblem_Logo_for_Nestify_with_Teal_Accents-removebg-preview.png" alt="NESTIFY Logo" class="logo-img" />
+      <span class="brand-name">NESTIFY</span>
+    </a>
+  </div>
+
+ 
+  
+
+  <div class="navbar-right">
+    <ng-container *ngIf="!(auth.isLoggedIn$ | async)">
+      <a routerLink="/login" class="icon-link">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <span>  Login</span>
+    </a>
+    </ng-container>
+
+    <ng-container *ngIf="(auth.isLoggedIn$ | async)">
+       <a routerLink="/login"(click)="auth.logout()" class="icon-link" style="cursor: pointer;">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </ng-container>
+
+    <a routerLink="/profile"><i class="fa-solid fa-user"></i>
+    </a><span></span>
+    <a routerLink="/cart"><i class="fas fa-shopping-cart"></i>
+    </a><span></span>
+  </div>
+</nav>

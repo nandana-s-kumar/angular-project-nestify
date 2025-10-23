@@ -1,0 +1,47 @@
+<!-- product details -->
+<div class="product-detailed-container" *ngIf="!loading; else loadingTpl">
+  <div *ngIf="product; else notFoundTpl" class="product-detailed-card">
+    <div class="left">
+      <img
+        [src]="getPrimaryImage(product)"
+        [alt]="product.name"
+        class="detail-image"
+      />
+    </div>
+    <div class="product-detail">
+  <!-- your existing product template -->
+  <div class="purchase">
+  </div>
+</div>
+
+
+    <div class="right">
+      <h1 class="detail-name">{{ product.name }}</h1>
+
+      <p class="price" *ngIf="product.price">₹{{ product.price }}</p>
+
+      <div class="meta">
+        <span class="rating">⭐ {{ product.rating ?? '-' }}</span>
+        <span class="stock" *ngIf="product.stock !== undefined">{{ product.stock }} in stock</span>
+      </div>
+
+      <p class="description">{{ product.description ?? 'No description available.' }}</p>
+
+      <div class="actions">
+        <button class="btn primary" (click)="addToCart(true)">Add to cart</button>
+        <button class="btn outline" (click)="goBack()">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #notFoundTpl>
+    <div class="not-found">
+      <p>{{ errorMessage || 'Product not found' }}</p>
+      <button class="btn outline" (click)="goBack()">Back to products</button>
+    </div>
+  </ng-template>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading product...</div>
+</ng-template>

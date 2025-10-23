@@ -1,0 +1,43 @@
+<div class="profile-root">
+  <div class="profile-card">
+    <h2>My Profile</h2>
+
+    <div class="profile-row">
+      <label>Email</label>
+      <div class="value">{{ user?.email }}</div>
+    </div>
+
+    <div class="profile-row">
+      <label>Name</label>
+      <div *ngIf="!editMode" class="value">{{ user?.name }}</div>
+      <div *ngIf="editMode">
+        <input [(ngModel)]="name" placeholder="Your name" />
+      </div>
+    </div>
+
+    <div class="profile-row">
+      <label>Password</label>
+      <div *ngIf="!editMode" class="value">••••••••</div>
+      <div *ngIf="editMode">
+        <input type="password" [(ngModel)]="password" placeholder="New password (leave blank to keep)" />
+        <input type="password" [(ngModel)]="passwordConfirm" placeholder="Confirm password" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button *ngIf="!editMode" class="btn primary" (click)="enableEdit()">Edit profile</button>
+      <button *ngIf="!editMode" class="btn outline" (click)="logout()">Logout</button>
+
+      <button *ngIf="editMode" class="btn primary" (click)="saveProfile()" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save changes' }}
+      </button>
+      <button *ngIf="editMode" class="btn outline" (click)="cancelEdit()">Cancel</button>
+
+      <button class="btn danger" (click)="deleteAccount()">Delete account</button>
+    </div>
+
+    <div class="msg success" *ngIf="message">{{ message }}</div>
+    <div class="msg error" *ngIf="error">{{ error }}</div>
+  </div>
+</div>
+

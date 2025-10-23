@@ -1,0 +1,20 @@
+.profile-root { padding: 28px; display:flex; justify-content:center; font-family:Inter, system-ui, Arial; }
+.profile-card {
+  width:100%; max-width:720px; background:#fff; border-radius:12px; padding:20px;
+  box-shadow:0 16px 40px rgba(7,32,51,0.06); border:1px solid rgba(7,32,51,0.04);
+}
+.profile-card h2 { margin:0 0 14px; color:#072033; }
+.profile-row { display:flex; gap:12px; align-items:center; margin:12px 0; }
+.profile-row label { width:120px; font-weight:700; color:#334155; }
+.value { flex:1; color:#0f172a; }
+input { flex:1; padding:10px 12px; border-radius:8px; border:1px solid #e6eef0; }
+
+.actions { margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+.btn { padding:10px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:700; }
+.btn.primary { background: linear-gradient(180deg,#0dcaf0,#089baa); color:#042026; }
+.btn.outline { background:transparent; border:1px solid #e6eef0; color:#072033; }
+.btn.danger { background:#ef4444; color:#fff; }
+
+.msg { margin-top:12px; font-size:14px; }
+.msg.success { color:#059669; }
+.msg.error { color:#ef4444; }

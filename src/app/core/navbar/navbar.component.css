@@ -1,0 +1,113 @@
+/* Navbar wrapper */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  font-family: Arial, sans-serif;
+  max-height: 75px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-img {
+  height: 80px;   
+  width: auto;
+  margin-right: 8px;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #46291a;
+}
+
+
+/* Center section (Search bar) */
+.navbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #f1f1f1;
+  border-radius: 25px; /* Oval shape */
+  padding: 5px 10px;
+  width: 300px; /* smaller width */
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 25px;
+}
+
+.search-btn {
+  padding: none;
+  border: none;
+  background: none;
+  color: rgb(86, 39, 25);
+  font-size: 16px;
+}
+
+.search-btn:hover {
+  color: teal;
+}
+
+/* Right section (Links) */
+.navbar-right {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar-right a {
+  text-decoration: none;
+  color: #571919;
+  font-size: 15px;
+  transition: color 0.3s;
+}
+
+.navbar-right a:hover {
+  color:teal;
+}
+/* Login Button */
+.login-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #5f241e;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+  background-color: teal;
+}
+
+/* Other links on right */
+.navbar-right a {
+  text-decoration: none;
+  color: #571919;
+  font-size: 15px;
+  margin-left: 10px;
+  transition: color 0.3s;
+  max-height: 30px;
+}
+
+.navbar-right a:hover {
+  color:teal;
+}

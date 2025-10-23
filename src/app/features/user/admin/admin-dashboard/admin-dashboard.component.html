@@ -1,0 +1,271 @@
+<div class="admin-dashboard" [class.dark]="darkMode">
+  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="brand">
+      <div class="label" *ngIf="!isSidebarCollapsed">MyAdmin</div>
+    </div>
+
+    <nav>
+      <ul>
+        <li [class.active]="activeTab==='dashboard'" (click)="setTab('dashboard')">Dashboard</li>
+        <li [class.active]="activeTab==='users'" (click)="setTab('users')">Users</li>
+        <li [class.active]="activeTab==='products'" (click)="setTab('products')">Products</li>
+        <li [class.active]="activeTab==='orders'" (click)="setTab('orders')">Orders</li>
+        <li [class.active]="activeTab==='settings'" (click)="setTab('settings')">Settings</li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="secondary" (click)="toggleSidebar()">{{ isSidebarCollapsed ? '→' : '←' }}</button>
+      <button class="secondary" (click)="toggleDarkMode()">🌓</button>
+      <button (click)="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div class="search">
+        <input type="text" placeholder="Search orders / customers" [(ngModel)]="searchQuery" (input)="onSearch()" />
+      </div>
+
+      <div class="top-actions">
+        <div class="notifications" (click)="openNotifications()">
+          🔔 <span *ngIf="notifications.length" class="badge">{{ notifications.length }}</span>
+        </div>
+        <div class="profile">Hi, {{ adminName }}</div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD STATS -->
+    <section class="stats" *ngIf="activeTab==='dashboard'">
+      <div class="stat-card" *ngFor="let s of stats" (click)="statCardClick(s)">
+        <div class="stat-title">{{ s.title }}</div>
+        <div class="stat-value">
+          <span #val>{{ s.value }}</span>
+          <div class="stat-delta" [class.positive]="s.delta>=0" [class.negative]="s.delta<0">
+            {{ s.delta }}%
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS LIST -->
+    <section class="content" *ngIf="activeTab==='orders' || activeTab==='dashboard'">
+      <div class="panel" *ngIf="activeTab==='orders' || activeTab==='dashboard'">
+        <h3>Recent Orders</h3>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <select [(ngModel)]="filterStatus" (change)="applyFilters()">
+            <option value="">All status</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <input placeholder="Min amount" type="number" [(ngModel)]="minAmount" (input)="applyFilters()" />
+          <button class="secondary" (click)="reloadOrders()">Refresh</button>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr><th>ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let o of displayedOrders" (click)="selectOrder(o)" [class.clickable]="true">
+              <td>{{ o.id }}</td>
+              <td>{{ o.customer }}</td>
+              <td>{{ o.amount | currency:'INR' }}</td>
+              <td><span class="status" [ngClass]="o.status.toLowerCase()">{{ o.status }}</span></td>
+              <td>
+                <button (click)="viewOrder(o, $event)">View</button>
+                <button (click)="toggleOrderStatus(o, $event)">{{ o.status === 'Pending' ? 'Mark Completed' : 'Re-open' }}</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- pagination (simple) -->
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+          <button class="secondary" [disabled]="page===1" (click)="prevPage()">Prev</button>
+          <div class="text-muted">Page {{page}} / {{totalPages}}</div>
+          <button class="secondary" [disabled]="page>=totalPages" (click)="nextPage()">Next</button>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Top users -->
+      <div class="panel small" style="min-width: 260px;">
+        <h3>Top Users</h3>
+        <ul class="user-list">
+          <li *ngFor="let u of topUsers">
+            <div class="avatar">{{ u.name.charAt(0) }}</div>
+            <div style="flex:1">
+              <div class="u-name">{{ u.name }}</div>
+              <div class="u-meta text-muted">Orders: {{u.orders}} • Spent: {{u.spent | currency:'INR'}}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button (click)="openUser(u)">Open</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- USERS view -->
+    <section *ngIf="activeTab==='users'">
+      <div class="panel">
+        <h3>All Users</h3>
+        <div *ngIf="users.length===0" class="text-muted">No users found</div>
+
+        <ul class="user-list" *ngIf="users.length">
+          <li *ngFor="let u of users">
+            <div class="avatar">{{ (u.name || u.email || '?').charAt(0) }}</div>
+
+            <div style="flex:1; min-width:0;">
+              <div class="u-name">
+                {{ u.name }} <small class="text-muted">({{ u.role || 'user' }})</small>
+                <span style="margin-left:8px;" class="badge-small" [ngClass]="{'text-muted': u.status==='active'}">
+                  {{ u.status || 'active' }}
+                </span>
+              </div>
+              <div class="u-meta text-muted">{{ u.email }}</div>
+            </div>
+
+            <div style="display:flex;gap:8px;align-items:center">
+              <button *ngIf="u.status === 'pending'" (click)="acceptUser(u)">Accept</button>
+              <button *ngIf="u.status === 'active'" class="secondary" (click)="blockUser(u)">Block</button>
+              <button *ngIf="u.status === 'blocked'" (click)="unblockUser(u)">Unblock</button>
+
+              <button (click)="editUser(u)">Edit</button>
+              <button class="secondary" (click)="deleteUser(u)">Delete</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PRODUCTS view (integrated) -->
+    <section *ngIf="activeTab==='products'">
+      <div class="panel grid" style="gap:16px; align-items:flex-start;">
+        <div class="left" style="flex:1;">
+          <h3>Products</h3>
+
+          <div class="controls" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <input placeholder="Search by name or category" [(ngModel)]="productSearch" (input)="applyProductFilters()" />
+            <button class="secondary" (click)="loadProducts()">Refresh</button>
+          </div>
+
+          <div *ngIf="productLoading" class="text-muted">Loading products…</div>
+
+          <table class="table" *ngIf="displayedProducts?.length">
+            <thead>
+              <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of displayedProducts">
+                <td class="img-cell">
+                  <img *ngIf="p.imageUrl" [src]="p.imageUrl" alt="{{p.name}}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;" />
+                  <div *ngIf="!p.imageUrl" class="img-placeholder" style="width:48px;height:48px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#666;">
+                    {{ p.name.charAt(0) }}
+                  </div>
+                </td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.category }}</td>
+                <td>{{ p.price | currency:'INR' }}</td>
+                <td>{{ p.stock }}</td>
+                <td>
+                  <span class="badge" [class.available]="p.available" [class.unavailable]="!p.available">
+                    {{ p.available ? 'Available' : 'Unavailable' }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button (click)="toggleAvailability(p)">{{ p.available ? 'Disable' : 'Enable' }}</button>
+                  <button class="secondary" (click)="deleteProduct(p)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="!displayedProducts?.length && !productLoading" class="text-muted">No products found.</div>
+
+          <div class="pagination" *ngIf="productTotalPages > 1" style="display:flex;justify-content:flex-end;gap:12px;align-items:center;margin-top:12px;">
+            <button class="secondary" [disabled]="productPage===1" (click)="productPrevPage()">Prev</button>
+            <div>Page {{productPage}} / {{productTotalPages}}</div>
+            <button class="secondary" [disabled]="productPage>=productTotalPages" (click)="productNextPage()">Next</button>
+          </div>
+        </div>
+
+        <aside class="right" style="width:360px;background:#fff;padding:12px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+          <h4>Add new product</h4>
+          <div class="form" style="margin-top:8px;">
+            <label>
+              Name
+              <input [(ngModel)]="newProduct.name" />
+            </label>
+
+            <label>
+              Price
+              <input type="number" [(ngModel)]="newProduct.price" />
+            </label>
+
+            <label>
+              Stock
+              <input type="number" [(ngModel)]="newProduct.stock" />
+            </label>
+
+            <label>
+              Category
+              <input [(ngModel)]="newProduct.category" />
+            </label>
+
+            <label>
+              Image URL
+              <input [(ngModel)]="newProduct.imageUrl" placeholder="https://..." />
+            </label>
+
+            <label>
+              Description
+              <textarea [(ngModel)]="newProduct.description"></textarea>
+            </label>
+
+            <label class="row" style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" [(ngModel)]="newProduct.available" /> Available
+            </label>
+
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button (click)="addProduct()">Add product</button>
+              <button class="secondary" (click)="resetProductForm()">Reset</button>
+            </div>
+
+            <div class="feedback" *ngIf="productFeedback" style="margin-top:10px;color:#2a6f2a;font-size:13px;">{{ productFeedback }}</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Order modal (simple inline modal) -->
+    <div class="modal-backdrop" *ngIf="modalOrder" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h4>Order {{ modalOrder.id }}</h4>
+        <div><strong>Customer:</strong> {{ modalOrder.customer }}</div>
+        <div><strong>Amount:</strong> {{ modalOrder.amount | currency:'INR' }}</div>
+        <div><strong>Status:</strong> <span class="status" [ngClass]="modalOrder.status.toLowerCase()">{{ modalOrder.status }}</span></div>
+        <div style="margin-top:10px;">
+          <button (click)="toggleOrderStatus(modalOrder)">Toggle status</button>
+          <button class="secondary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

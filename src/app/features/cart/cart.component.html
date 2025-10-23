@@ -1,0 +1,52 @@
+<div class="cart-page container">
+  <h2 class="heading">Shopping Cart</h2>
+
+  <div *ngIf="cartEntries.length === 0" class="empty">
+    <p>Your cart is empty.</p>
+    <a routerLink="/">Continue shopping</a>
+  </div>
+
+  <div *ngIf="cartEntries.length > 0" class="cart-list">
+    <div class="cart-item" *ngFor="let entry of cartEntries">
+      <img [src]="entry.product.image || 'assets/placeholder.png'" alt="{{entry.product.name || 'product'}}" class="thumb" />
+
+      <div class="info">
+        <h3 class="product-name">{{ entry.product.name }}</h3>
+        <p class="product-desc" *ngIf="entry.product.description">{{ entry.product.description }}</p>
+
+        <div class="price-qty">
+          <div>
+            <div class="price">₹ {{ (entry.product.price ?? 0) | number:'1.2-2' }}</div>
+            <div class="subtotal">Subtotal: ₹ {{ ((entry.product.price ?? 0) * entry.quantity) | number:'1.2-2' }}</div>
+          </div>
+
+          <div class="qty-controls">
+            <button type="button" class="qty-btn" (click)="decrease(entry)">-</button>
+            <input class="qty-input" type="number" [value]="entry.quantity" (change)="onQtyChange(entry, $event)" min="1" />
+            <button type="button" class="qty-btn" (click)="increase(entry)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="remove-btn" (click)="remove(entry)">Remove</button>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <div class="summary-left">
+        <button class="clear-btn" (click)="clearAll()">Clear cart</button>
+      </div>
+
+      <div class="summary-right">
+        <div class="total-row">
+          <span class="label">Total</span>
+          <span class="value">₹ {{ total | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-actions">
+          <button routerLink="/checkout" class="checkout-btn">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

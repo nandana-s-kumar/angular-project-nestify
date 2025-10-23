@@ -1,0 +1,71 @@
+<main class="signup-page" role="main">
+  <section class="signup-wrap" aria-labelledby="signup-title">
+    <div class="brand">
+      <img src="assets\Emblem_Logo_for_Nestify_with_Teal_Accents-removebg-preview.png" alt="NESTIFY logo" class="brand-logo" />
+      <h1 id="signup-title" class="brand-title">Create your account</h1>
+      <p class="brand-sub">Join NESTIFY — simple, secure, and fast.</p>
+    </div>
+
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <!-- Name -->
+        <label class="field">
+          <span class="field-label">Full name</span>
+          <input type="text" formControlName="name" placeholder="Your full name" autocomplete="name"
+                 [class.invalid]="form.get('name')?.touched && form.get('name')?.invalid"/>
+        </label>
+        <div class="help" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+          Name is required (min 2 characters).
+        </div>
+
+        <!-- Email -->
+        <label class="field">
+          <span class="field-label">Email</span>
+          <input type="email" formControlName="email" placeholder="you@domain.com" autocomplete="email"
+                 [class.invalid]="form.get('email')?.touched && form.get('email')?.invalid"/>
+        </label>
+        <div class="help" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+          Please enter a valid email.
+        </div>
+
+        <!-- Password -->
+        <label class="field">
+          <span class="field-label">Password</span>
+          <input type="password" formControlName="password" placeholder="Minimum 6 characters"
+                 autocomplete="new-password"
+                 [class.invalid]="form.get('password')?.touched && form.get('password')?.invalid"/>
+        </label>
+        <div class="help" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+          Password must be at least 6 characters.
+        </div>
+
+        <!-- Confirm -->
+        <label class="field">
+          <span class="field-label">Confirm password</span>
+          <input type="password" formControlName="confirm" placeholder="Repeat password" autocomplete="new-password"
+                 [class.invalid]="(form.errors?.['mismatch'] && form.get('confirm')?.touched)"/>
+        </label>
+        <div class="help" *ngIf="form.errors?.['mismatch'] && form.get('confirm')?.touched">
+          Passwords do not match.
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button class="btn primary" type="submit" [disabled]="loading">
+            <span *ngIf="!loading">Create account</span>
+            <span *ngIf="loading">Creating…</span>
+          </button>
+        </div>
+
+        <!-- Messages -->
+        <div class="msg success" *ngIf="success">{{ success }}</div>
+        <div class="msg error" *ngIf="error">{{ error }}</div>
+      </form>
+
+      <p class="alt">
+        Already have an account?
+        <a routerLink="/login" class="alt-link">Login</a>
+      </p>
+    </div>
+  </section>
+</main>
